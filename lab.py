@@ -61,8 +61,12 @@ def get_embeddings(texts: list[str], model: str = DEFAULT_EMBEDDING_MODEL) -> li
     attribute is a list of objects, each with an `.embedding` field.
     """
     # TODO: Call the API and return the embeddings.
-    raise NotImplementedError
+    response = client.embeddings.create(
+        model=model, 
+        input=texts,
+    )
 
+    return [i.embedding for i in response.data]
 
 # ---------------------------------------------------------------------------
 # Part 2 — Mean pooling
@@ -83,7 +87,18 @@ def mean_pool(embeddings: list[list[float]]) -> np.ndarray:
     text), mean-pooling collapses them into one representation.
     """
     # TODO: Compute and return the mean-pooled vector.
-    raise NotImplementedError
+    res=[]
+    i=0
+    while i<len(embeddings[0]):
+        s=0
+        j=0
+        while j<len(embeddings):
+            s+=embeddings[j][i]
+            j+=1
+        res.append(s/len(embeddings))
+        i+=1
+       
+    return np.array(res)
 
 
 # ---------------------------------------------------------------------------
@@ -107,7 +122,10 @@ def cosine_similarity(vec_a: np.ndarray, vec_b: np.ndarray) -> float:
     (dot product, norm, etc.).
     """
     # TODO: Implement cosine similarity from scratch.
-    raise NotImplementedError
+    numerator = vec_a@vec_b
+    magnitude_a=np.sqrt(vec_a@vec_a)
+    magnitude_b=np.sqrt(vec_b@vec_b)
+    return numerator/(magnitude_a*magnitude_b)
 
 
 # ---------------------------------------------------------------------------
@@ -136,7 +154,14 @@ def top_k_similar(
     Hint: Use your cosine_similarity function from Part 3.
     """
     # TODO: Compute similarities and return the top-k results.
-    raise NotImplementedError
+    i=0
+    similarities=[]
+    while i<len(corpus_vecs):
+        similarities.append((corpus_texts[i], cosine_similarity(corpus_vecs[i],query_vec)))
+        i+=1
+    sortedSimilarities=similarities.sort(key=lambda x: x[1], reverse=True)
+    return sortedSimilarities[:k]
+
 
 
 # ---------------------------------------------------------------------------
