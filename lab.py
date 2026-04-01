@@ -159,8 +159,8 @@ def top_k_similar(
     while i<len(corpus_vecs):
         similarities.append((corpus_texts[i], cosine_similarity(corpus_vecs[i],query_vec)))
         i+=1
-    sortedSimilarities=similarities.sort(key=lambda x: x[1], reverse=True)
-    return sortedSimilarities[:k]
+    similarities.sort(key=lambda x: x[1], reverse=True)
+    return similarities[:k]
 
 
 
@@ -188,7 +188,6 @@ def main():
     print("  Top-3 most similar sentences:")
     for rank, (sentence, score) in enumerate(results, 1):
         print(f"  {rank}. [{score:.4f}] {sentence}")
-
 
 if __name__ == "__main__":
     main()
